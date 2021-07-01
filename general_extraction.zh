@@ -1,0 +1,29 @@
+#este script limpia el pdf emitidio diairamente por BBVA GENERAL
+
+#______________________
+#I-AMBIENTE
+#______________________
+
+#______________________
+#I-SOURCE
+#______________________
+
+#link de ejemplo: https://www.bbva.mx/content/dam/public-web/mexico/documents/empresas/fondos/home-fondos-de-inversion/do_6_Rendimientos_00003776.pdf
+
+curl -o sourcedoc.pdf https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/00003776.pdf
+
+/Applications/calibre.app/Contents/MacOS/ebook-convert sourcedoc.pdf file.txt
+
+#______________________
+#I-RAW_DATA
+#______________________
+
+#expresion regular para extraer el texto que nos importa
+#primero elimino los espacios en blanco
+#luego elimino las lineas don más de 10 palabras para tumbar la info inecesaria
+# solo selecciono la primera parte de los datos delimitada por Deuda CP y Fondos de Estrategia
+#finalmente elimino la primer y ultima linea de tal manera que me quede solo la info que necesito del pdf
+
+grep -v -e '^$' file.txt | awk 'NF < 10'|sed -n -e '/Deuda C.P. P.F./,/Fondos de Estrategias/ p; /Fondos de Estrategias/q' | sed -e '$d' | sed 1d > general_raw.txt
+
+

@@ -1,0 +1,92 @@
+#_______________________
+
+#Información particular por fondo
+
+## En este código se extrae la información de los pdfs DICIS de BBVA
+## Lo unico que hay que hacer es ecnontrar un archivo DICI de BBVA que es buscando el nombre del fondo en google
+## A partir, de ahí hay que insertar el nombre del pdf del url en la lista de variables ListaPDFS.
+## Lo que sigue es que se scrappea la información particular de cada fondo
+## Posteriormente se juntará la información en un R script
+
+#_______________________
+
+
+#_______________________
+# PDFS
+#_______________________
+
+
+
+##### script por fondo INPUT (archivos de DICIS)
+
+# https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/00007833.pdf
+# https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/00006868.pdf
+# https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/00006867.pdf
+# https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/00007836.pdf
+# https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/00007203.pdf
+
+#00009662
+#00009650
+#00009661
+#00007204
+#00007835
+
+"00009662" "00009650" "00009661" "00007204" "00007835"
+
+#_______________________
+# I. Ambiente
+#_______________________
+
+
+
+#cramos bases de datos para vaciar la info
+
+touch context_fondo.txt
+touch clave.txt
+touch liquidez.txt
+touch horario.txt
+touch ren_bruto.txt
+touch ren_neto.txt
+touch plazo_min.txt
+
+#Creamos una lista con los pdfs
+
+declare -a ListaPDFS=("00007833" "00006868" "00006867" "00007836" "00007203" "00009662" "00009650" "00009661" "00007204" "00007835")
+
+
+#_______________________
+# II. Extracción de datos
+#_______________________
+
+#Se crea un loop que ejecuta el mismo comando para cada pdf
+
+for val in ${ListaPDFS[@]}; do
+
+
+curl -o sourcedoc.pdf https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/$val.pdf
+/Applications/calibre.app/Contents/MacOS/ebook-convert sourcedoc.pdf file.txt
+
+#Información fija (nombre,soc_op y razon, tipo,clase, plazo-categoria, clave):
+sed -n '3p;5p;9p;17p;25p' file.txt >> context_fondo.txt
+
+
+#Información variable: clave de pizarra
+grep -v -e '^$' file.txt |awk '/Clave de Pizarra/{getline;print}' | sed 1d |head -n 1 >> clave.txt
+
+#Información variable: liquidez
+grep -v -e '^$' file.txt |awk '/Liquidez/{getline;print}' | sed 1d |head -n 1 >> liquidez.txt
+
+#Información variable: horario
+grep -v -e '^$' file.txt |sed -n -e '/Horario/,/Ordenes/ p; /Ordenes/q' | sed 1d |head -n 1 >> horario.txt
+
+#Información variable: ren_bruto
+grep -v -e '^$' file.txt |sed -n -e '/Rendimiento Bruto/,/Rendimiento Neto/ p; /Rendimiento Neto/q' | sed 1d |head -n 5 >> ren_bruto.txt
+
+#Información variable: ren_neto
+grep -v -e '^$' file.txt |sed -n -e '/Rendimiento Neto/,/Tasa Libre de Riesgo/ p; /Tasa Libre de Riesgo/q' | sed 1d |head -n 5 >> ren_neto.txt
+
+#Información variable: plazo minimo permanencia
+grep -v -e '^$' file.txt |sed -n -e '/Plazo mínimo de/,/Liquidez/ p; /Liquidez/q' | sed 1d |head -n 1 |  sed 's/Liquidez//g'>> plazo_min.txt
+
+done
+
