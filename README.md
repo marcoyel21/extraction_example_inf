@@ -17,4 +17,4 @@ general_cleaning.R<- Script en R para limpieza de información de fondos en gene
 
 fondos_particulares.csv<-base de datos adecuable a cualquier fondo que indiquemos queremos en el script (con base en sus fichas de información)
 
-general_funds_info.csv<-base de datos que toma sus valores de la actualización diaria de información de fondos por parte de BBVA con base en el archivo denominado Anaquel con Rendimientos Históricos del Día Actual
+fondos_generales.csv<-base de datos que toma sus valores de la actualización diaria de información de fondos por parte de BBVA con base en el archivo denominado Anaquel con Rendimientos Históricos del Día Actual
