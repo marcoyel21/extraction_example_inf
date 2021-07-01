@@ -49,15 +49,19 @@ Sin embargo se notó que solo se encontraba información muy general. Por lo que
 
 Se encontró que la SO pública informes y reportes relacionados con el desempeño, normatividad y demás información relevante para el inversionista de cada bono y de los bonos de la SO en general. Por ello, con base en dichos documentos se decidió optar por dos estrategias con base en dos documentos distintos.
 
-+ En primer lugar, una extracción de datos general del reporte diario acerca de todos los fondo de la [Sociedad Operadora](https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/00003776.pdf).
++ En primer lugar, una extracción de datos general del reporte diario acerca de todos los fondos de la [Sociedad Operadora](https://portal.bbva.mx/siabinternet/Repositorio/import/doctos/analisis/00003776.pdf).
 
 !["Anaquel con Rendimientos Históricos del Día Actual"](img/img.png)
 
-+ En segundo lugar, una vez identificado algún bono en particular, se procede a realizar una extracción direccionada con base en el documento DICI que emite la SO para cada fondo.
++ En segundo lugar, una vez identificado algún fondo en particular, se procede a realizar una extracción direccionada con base en el documento DICI que emite la SO para cada fondo.
 
 !["Documento con información clave para la inversión"](img/img2.png)
 
-Para estas tareas se desarrollaron 2 scripts de bash para la extracción y limpieza inicial y 2 de R para acomodar los datos. Los 4 scripts son automaticos, replicables y altamente funcionales. 
+Para estas tareas se desarrollaron 2 scripts de bash para la extracción y limpieza inicial y 2 de R para acomodar los datos. Los 4 scripts son automaticos, replicables y altamente funcionales. De esta manera se elaborarán dos bases de datos:
+
++ fondos_generales.csv que contiene información de los fondos mostrados en el reporte diario de BBVA (aunque por lo pronto solo se desarrollo el script para scrappear de manera diaria y completamente replicable solo la primera parte "Fondos de Deuda C.P P.F" aunque se podría trabajar posteriormente, con más tiempo, para adecuarlo de tal manera que se pueda extraer el contenido completo)
+
++ fondos_particulares.csv que contiene información de cada fondo ad hoc que gustemos agregar 
 
 Como comentario final, algunas variables no se extrajeron debido a que implicaría hacer 2 códigos adicionales para cada tipo de docuemnto nuevo. De esta manera, debido al tiempo otorgado (y debido a que tengo actividades) se decidió eficientizar esfuerzos en los dos tipos de documentos más ricos en contenido.
 
@@ -113,7 +117,7 @@ Todo esto se pude poner en un contenedor de docker para asegurar la replicabilid
 
 ## Extracción de datos 
 
-El siguiente script extrae de cada documento DICI información de manera muy direccionada
+El siguiente script extrae de cada documento DICI información de manera muy direccionada. Para probar la replicabilidad de los scripts, hemos extraido información puntual de 10 fondos.
 
 ```{bash, engine.opts='-l'}
 chmod +x particular_extraction.zh
@@ -123,7 +127,8 @@ chmod +x particular_extraction.zh
 
 ## Limpieza
 
-El siguiente script, acomoda la información extraída de tal manera que crea la base de datos de nombre *particular_funds_info.csv*
+El siguiente script, acomoda la información extraída de tal manera que crea la base de datos de nombre *particular_funds_info.csv*.
+
 ```{r}
 #indico cuantos documentos scrapee
 num<-10
@@ -167,3 +172,7 @@ x<-c(
 + Entablar comunicación con el usuario de los scripts de tal manera de proponerle una manera comoda para usar los scripts: por ejemplo, una app, un dashboard, un documento interactivo o el script, dependiendo. Esto debido a que en el caso de la información particular hay algunos  inputs como urls a scrapear e indicar cantidad de documentos. Por el contrario, los scripts de información general están listos para usarse de manera diaria sin ningun input, por lo menos hasta que BBVA cambie la url (en todo caso simplemente habría que actualizar la url).
 
 + Entablar comunicación con el usuario de tal manera de determinar la manera de uso para asegurar la replicanilidad. Puede montarse un docker, pueden instalarse requerimientos en cada maquina, puede montarse un servicio web o una maquina virtual.
+
++ Mejorar la eficiencia en cuanto a los scripts de tal manera que no creen tantos archivos auxiliares. Esto es importante si el objetivo es escalar a *Big Data*.
+
++ Crear un documento de leyenda de variables y claves para comodidad del usuario.
