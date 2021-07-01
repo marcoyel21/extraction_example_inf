@@ -1,4 +1,5 @@
-En este repositorio se organizan los scripts, base de datos y presentaciones relativos al proceso de reclutamiento de INFOSEL. 
+En este repositorio se organizan los scripts, base de datos y presentaciones relativos al proceso de reclutamiento de INFOSEL. La explicación de todo este proceso de minería se encuentra en el siguiente link: https://rpubs.com/marcoyel21/787089
+
 El contenido es el siguiente.
 
 Archivos:
