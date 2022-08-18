@@ -1,5 +1,5 @@
 ---
-title: "INFOSEL Mining"
+title: "BBVA Mining"
 author: "Marco Ramos"
 date: "6/30/2021"
 output: 
